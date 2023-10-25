@@ -12,7 +12,12 @@ const spinner = ora('Loading problem list...').start()
 const problems = []
 const problemsByName = {}
 fs.readdirSync('./problems', { withFileTypes: true }).forEach(source => {
-  if (!source.isDirectory() || source.name === 'template') return
+  if (
+    !source.isDirectory() ||
+    source.name === 'template' ||
+    source.name.startsWith('.')
+  )
+    return
 
   fs.readdirSync(`./problems/${source.name}`, {
     withFileTypes: true
@@ -162,7 +167,10 @@ let { task, verbose, caseSelection, confirmAdd, source, category } =
           const sources = fs
             .readdirSync('./problems', { withFileTypes: true })
             .filter(
-              dirent => dirent.isDirectory() && dirent.name !== 'template'
+              dirent =>
+                dirent.isDirectory() &&
+                dirent.name !== 'template' &&
+                !dirent.name.startsWith('.')
             )
             .map(dirent => dirent.name.normalize('NFC'))
           const filtered = sources.filter(source =>
