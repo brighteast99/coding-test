@@ -1,3 +1,4 @@
+import { spawn } from 'child_process'
 import inquirer from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 inquirer.registerPrompt('autocomplete', inquirerPrompt)
@@ -85,7 +86,7 @@ let { task, verbose, caseSelection, confirmAdd, source, category } =
           )
           filtered.push({
             name: chalk.green(`Add new problem '${input}'`),
-            value: { name: input, type: 'Add' }
+            value: { target: input, type: 'Add' }
           })
           resolve(filtered)
         })
@@ -153,7 +154,7 @@ let { task, verbose, caseSelection, confirmAdd, source, category } =
     {
       name: 'confirmAdd',
       type: 'confirm',
-      message: ({ task }) => `Add new problem ${task.name}?`,
+      message: ({ task }) => `Add new problem ${task.target}?`,
       when: ({ task }) => task.type === 'Add',
       default: true
     },
@@ -247,9 +248,11 @@ let { task, verbose, caseSelection, confirmAdd, source, category } =
         if (typeof choice === 'object' && choice.noInput)
           return chalk.red('Category is required')
 
-        if (fs.existsSync(`./problems/${source}/${choice.value}/${task.name}/`))
+        if (
+          fs.existsSync(`./problems/${source}/${choice.value}/${task.target}/`)
+        )
           return chalk.red(
-            `Problem '${task.name}' already exists under '${source}/${choice.value}/'.`
+            `Problem '${task.target}' already exists under '${source}/${choice.value}/'.`
           )
 
         return true
@@ -281,16 +284,23 @@ if (task.type === 'Run') {
     }
   })
 } else {
-  if (source && category && task.name) {
+  if (source && category && task.target) {
     source = source.trim().replace('/', '∕')
     category = category.trim().replace('/', '∕')
-    task.name = task.name.trim().replace('/', '∕')
+    task.target = task.target.trim().replace('/', '∕')
     const spinner = ora('Setting up new problem...').start()
-    initSolution(`./problems/${source}/${category}/${task.name}/`)
+    initSolution(`./problems/${source}/${category}/${task.target}/`)
     spinner.succeed(
-      `A new problem ${chalk.green(task.name)} is added under ${chalk.blue(
-        './problems/' + source + '/' + category + '/'
+      `A new problem ${chalk.green(task.target)} is added under ${chalk.blue(
+        './problems/' + source + '/' + category + '/' + task.target
       )}.`
     )
+
+    spawn('code', [
+      `./problems/${source}/${category}/${task.target}/README.md`,
+      `./problems/${source}/${category}/${task.target}/testCases.json`,
+      `./problems/${source}/${category}/${task.target}/solultion.js`,
+      `./problems/${source}/${category}/${task.target}/note.txt`
+    ])
   }
 }
