@@ -299,7 +299,7 @@ if (task.type === 'Run') {
     spawn('code', [
       `./problems/${source}/${category}/${task.target}/README.md`,
       `./problems/${source}/${category}/${task.target}/testCases.json`,
-      `./problems/${source}/${category}/${task.target}/solultion.js`,
+      `./problems/${source}/${category}/${task.target}/solution.js`,
       `./problems/${source}/${category}/${task.target}/note.txt`
     ])
   }
