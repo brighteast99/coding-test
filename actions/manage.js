@@ -10,20 +10,23 @@ function initREADME(readMe, problemPath) {
   fs.writeFileSync(filePath, readMe)
 }
 
-export function initSolution(problemPath) {
+export function initSolution(problemPath, language) {
   if (fs.existsSync(problemPath)) throw new Error('Problem already exists')
 
   fs.mkdirSync(problemPath, { recursive: true })
 
   let files = fs.readdirSync('./problems/template/')
   files.forEach(file => {
-    if (file.includes('.md')) {
-      initREADME(
+    if (file.endsWith('.md')) {
+      return initREADME(
         fs.readFileSync(path.join('./problems/template/', file), 'utf8'),
         problemPath
       )
-      return
     }
+
+    if (language !== 'js' && (file.endsWith('.js') || file.endsWith('.json'))) return
+    if (language !== 'py' && file.endsWith('.py')) return
+
     const filePath = path.join('./problems/template/', file)
     const destFilePath = path.join(problemPath, file)
     fs.copyFileSync(filePath, destFilePath)

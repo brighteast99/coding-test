@@ -69,7 +69,7 @@ for (let name in problemsByName) {
 
 spinner.stop()
 
-let { task, verbose, caseSelection, confirmAdd, source, category } =
+let { task, verbose, caseSelection, confirmAdd, source, category, language } =
   await inquirer.prompt([
     {
       name: 'task',
@@ -258,6 +258,23 @@ let { task, verbose, caseSelection, confirmAdd, source, category } =
         return true
       },
       loop: false
+    },
+    {
+      name: 'language',
+      type: 'list',
+      message: 'Select language:',
+      when: ({ task, confirmAdd }) => task.type === 'Add' && confirmAdd,
+      choices: [
+        {
+          name: 'Python',
+          value: 'py'
+        },
+        {
+          name: 'JavaScript',
+          value: 'js'
+        }
+      ],
+      default: 'py'
     }
   ])
 
@@ -289,7 +306,7 @@ if (task.type === 'Run') {
     category = category.trim().replace('/', '∕')
     task.target = task.target.trim().replace('/', '∕')
     const spinner = ora('Setting up new problem...').start()
-    initSolution(`./problems/${source}/${category}/${task.target}/`)
+    initSolution(`./problems/${source}/${category}/${task.target}/`, language)
     spinner.succeed(
       `A new problem ${chalk.green(task.target)} is added under ${chalk.blue(
         './problems/' + source + '/' + category + '/' + task.target
