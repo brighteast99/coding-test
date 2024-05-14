@@ -306,18 +306,26 @@ if (task.type === 'Run') {
     category = category.trim().replace('/', '∕')
     task.target = task.target.trim().replace('/', '∕')
     const spinner = ora('Setting up new problem...').start()
-    initSolution(`./problems/${source}/${category}/${task.target}/`, language)
+    const path = `./problems/${source}/${category}/${task.target}`
+    initSolution(path, language)
     spinner.succeed(
       `A new problem ${chalk.green(task.target)} is added under ${chalk.blue(
         './problems/' + source + '/' + category + '/' + task.target
       )}.`
     )
 
-    spawn('code', [
-      `./problems/${source}/${category}/${task.target}/README.md`,
-      `./problems/${source}/${category}/${task.target}/testCases.json`,
-      `./problems/${source}/${category}/${task.target}/solution.js`,
-      `./problems/${source}/${category}/${task.target}/note.txt`
-    ])
+    if (language === 'js')
+      spawn('code', [
+        `${path}/README.md`,
+        `${path}/testCases.json`,
+        `${path}/solution.js`,
+        `${path}/note.txt`
+      ])
+    if (language === 'py')
+      spawn('code', [
+        `${path}/README.md`,
+        `${path}/solution.py`,
+        `${path}/note.txt`
+      ])
   }
 }
