@@ -4,8 +4,8 @@ import path from 'path'
 function initREADME(readMe, problemPath) {
   let tokens = problemPath.split('/')
   readMe = readMe
-    .replace('문제 이름', tokens[tokens.length - 2])
-    .replace('문제 분류', tokens[tokens.length - 3])
+    .replace('문제 이름', tokens[tokens.length - 1])
+    .replace('문제 분류', tokens[tokens.length - 2])
   const filePath = path.join(problemPath, 'README.md')
   fs.writeFileSync(filePath, readMe)
 }
